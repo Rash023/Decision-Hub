@@ -8,12 +8,12 @@ const DecisionMakingPage = () => {
   const handleCheckValidity = async () => {
     try {
       
-      const response = await fetch('YOUR_API_ENDPOINT', {
+      const response = await fetch('http:/localhost:4000/api/v1/query/generateDecision', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ question: userQuestion }),
+        body: JSON.stringify({ userDecision: userQuestion }),
       });
 
       if (response) {
