@@ -75,19 +75,19 @@
   <li><strong>REVOLUTIONARY NO-CODE RULE CRAFTING</strong><br>
     Experience a paradigm shift in rule creation with the Rule Builder. Say goodbye to the need for analysts to navigate programming languages or intricate technical interfaces. Our intuitive, no-code environment empowers analysts to express their business acumen seamlessly, free from technological constraints.
   </li>
-
+  <br>
   <li><strong>EXCELLENCE IN EXCEL-LIKE LOGIC</strong><br>
     Recognizing the familiarity of Business Analysts with tools like Excel, DecisionHub supports the creation of rules through calculator-like logic. Basic arithmetic expressions with conditional or comparison operators are effortlessly translated into rules and queries by the LLM model. Make a smooth transition with DecisionHub for analysts accustomed to widely-used platforms.
   </li>
-
+  <br>
   <li><strong>DYNAMIC RULE ADAPTATION AND TESTING</strong><br>
     Tackle the challenge of ever-changing business rules head-on. DecisionHub empowers analysts to swiftly modify and test decision strategies in real-time. With a user-friendly interface, rules can be adjusted on-the-fly, allowing for immediate observation of calculations. Reduce errors and streamline adaptation for evolving business requirements.
   </li>
-
+  <br>
   <li><strong>EFFORTLESS LOGIC CHECKING FOR RULES GALORE</strong><br>
     Simplify the complexity of managing thousands of rules with our application. A user-friendly mechanism facilitates rapid logic checking for each calculation. Leveraging LLM Powered Generative AI, analysts can run rules swiftly, identifying potential issues or incorrect conditions with a simple double-click. Streamline your decision strategies effortlessly.
   </li>
-
+  <br>
   <li><strong>SEAMLESS LLM INTEGRATION</strong><br>
     Elevate your rule-building experience with seamless integration with a Large Language Model (LLM). Transform plain English text into sophisticated queries that execute seamlessly across diverse platforms, extracting valuable data from databases. Let analysts convert business insights into actionable rules without the encumbrance of technological complexities.
   </li>
