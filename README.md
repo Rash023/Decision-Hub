@@ -96,9 +96,6 @@
   <h2 style="text-align: left;">ARCHITECTURAL DIAGRAM</h2>
   <p align="center"><img src="https://res.cloudinary.com/dvpulu3cc/image/upload/v1702618913/ARCHITECTURE_DIAGRAM_tk8eme.png" alt="Decision Hub Architectural Diagram"></p>
   
-  <h2  style="text-align: left;">SAMPLE SCREEN IMAGES</h2>
-  <p align="center">Include images here...</p>
-
   <h2 style="text-align: left;">CODE DEPLOYMENT</h2>
 
 <h3 style="text-align: left;">SETTING UP DECISION MAKING & QUERY GENERATION</h3>
