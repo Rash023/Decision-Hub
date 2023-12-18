@@ -8,19 +8,47 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <!-- Tailwind CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap">
+
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background: url('your-background-image.jpg') center center fixed;
-            background-size: cover;
-            color: #fff;
+        body, html {
+            font-family: 'Ubuntu', sans-serif;
+            background: linear-gradient(45deg, #f0f0f0, #e0e0e0); /* Light gradient background */
+            color: #333;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100%;
+            animation: moveBackground 20s linear infinite;
+            background: linear-gradient(to bottom right, #3494e6, #ec6ead);
+        }
+
+        @keyframes moveBackground {
+            0% {
+                background-position: 0% 0%;
+            }
+            100% {
+                background-position: 100% 100%;
+            }
         }
 
         .llm-ai {
-            background-color: rgba(0, 0, 0, 0.7);
+            background-color: rgba(0, 0, 0, 0.8);
             padding: 20px;
             border-radius: 10px;
             margin-top: 20px;
+            animation: fadeInUp 0.5s ease-out; /* Fade-in animation */
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         form {
@@ -29,10 +57,21 @@
 
         button {
             margin-top: 10px;
+            margin-bottom: 10px;
         }
 
         #generated-query {
             margin-top: 20px;
+            animation: fadeIn 0.5s ease-out; /* Fade-in animation */
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
         }
 
         pre {
@@ -41,6 +80,48 @@
             padding: 10px;
             border-radius: 5px;
             overflow-x: auto;
+            white-space: pre-wrap; /* Allow text to wrap within the pre element */
+        }
+
+        .faq-question {
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            background-color: #4CAF50;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease-in-out; /* Smooth color transition */
+        }
+
+        .faq-heading {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .faq-question:hover {
+            background-color: #45a049; /* Darker color on hover */
+        }
+
+        .faq-answer {
+            display: block;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #333;
+            color: #fff;
+            border-radius: 5px;
+        }
+
+        .faq-answer p {
+            margin: 0;
+        }
+
+        .apply-btn-container {
+            display: flex;
+            justify-content: center;
         }
     </style>
 </head>
@@ -64,7 +145,7 @@
                 <form action="/generate_query" method="post">
                     <div class="form-group">
                         <label for="query" class="text-white">Enter your query:</label>
-                        <input type="text" class="form-control mt-2" name="query" id="query" placeholder="e.g., SELECT * FROM your_table" required>
+                        <input type="text" class="form-control mt-2" name="query" id="query" placeholder="e.g. Find User whose Country is USA" required>
                     </div>
                     <button type="submit" class="btn btn-success mt-2">Generate SQL Query</button>
                 </form>
@@ -78,13 +159,34 @@
                             Copy
                         </button>
                     </div>
-                    <form action="/apply_query" method="post" class="mt-4">
+                    <form action="/apply_query" method="post" class="mt-4 apply-btn-container">
                         <input type="hidden" name="query" value="{{ generated_query|safe }}">
                         <button type="submit" class="btn btn-primary">Apply</button>
                     </form>
                 </div>
             {% endif %}
         {% endif %}
+        <div class="faq-heading">FAQ</div>
+        <div class="faq-question">
+            <span>Is my data safe?</span>
+        </div>
+        <div class="faq-answer">
+            <p>Your data is securely stored and protected. We prioritize the security and privacy of your information.</p>
+        </div>
+
+        <div class="faq-question">
+            <span>How can I contact support?</span>
+        </div>
+        <div class="faq-answer">
+            <p>You can reach our support team by emailing support@decision-hub.com</p>
+        </div>
+
+        <div class="faq-question">
+            <span>What file types are supported for upload?</span>
+        </div>
+        <div class="faq-answer">
+            <p>We currently support .db files for upload. Ensure your file is in the correct format before attempting to upload.</p>
+        </div>
     </div>
 
     <script>
@@ -98,5 +200,6 @@
             document.body.removeChild(textarea);
         }
     </script>
+
 </body>
 </html>

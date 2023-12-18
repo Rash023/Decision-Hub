@@ -65,6 +65,8 @@ def upload_file():
         return redirect(url_for('index'))
 
     if file and allowed_file(file.filename):
+        if not os.path.exists('uploads'):
+            os.makedirs('uploads')
         filename = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
         file.save(filename)
         execute(filename)
