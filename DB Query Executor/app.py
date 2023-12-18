@@ -2,6 +2,9 @@ from flask import Flask, render_template, request, redirect, url_for
 import os
 import sqlite3
 import google.generativeai as genai
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 
@@ -97,7 +100,8 @@ def execute_query():
 
 
 def get_query(query):
-    genai.configure(api_key="AIzaSyBAKzRqWGhGleuX3IxUnZguC_5wYTdOf1M")
+    api_key = os.getenv("API_KEY")
+    genai.configure(api_key=api_key)
     model_text = genai.GenerativeModel('gemini-pro')
     initial_text = "Here is my database info."
     question_text = f"Please generate me a SQL Query for this database for the following user query: {query}. I need just the query"
