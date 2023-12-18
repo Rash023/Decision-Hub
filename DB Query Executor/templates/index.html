@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Tailwind CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: url('your-background-image.jpg') center center fixed;
+            background-size: cover;
+            color: #fff;
+        }
+
+        .llm-ai {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        button {
+            margin-top: 10px;
+        }
+
+        #generated-query {
+            margin-top: 20px;
+        }
+
+        pre {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body class="bg-gray-900">
+    <div class="container mx-auto llm-ai">
+        <h1 class="text-4xl font-bold text-white">File Upload</h1>
+        <form action="/upload" method="post" enctype="multipart/form-data" class="mt-4">
+            <div class="form-group">
+                <label for="file" class="text-white">Upload .db file:</label>
+                <input type="file" class="form-control-file" name="file" id="fileInput" accept=".db" required>
+            </div>
+            <button type="submit" class="btn btn-primary mt-2">Upload</button>
+        </form>
+
+        {% if message %}
+            <div class="alert alert-success mt-4" role="alert">
+                {{ message }}
+            </div>
+            <div class="mt-4">
+                <h2 class="text-2xl font-bold text-white">Perform Query</h2>
+                <form action="/generate_query" method="post">
+                    <div class="form-group">
+                        <label for="query" class="text-white">Enter your query:</label>
+                        <input type="text" class="form-control mt-2" name="query" id="query" placeholder="e.g., SELECT * FROM your_table" required>
+                    </div>
+                    <button type="submit" class="btn btn-success mt-2">Generate SQL Query</button>
+                </form>
+            </div>
+            {% if generated_query %}
+                <div id="generated-query" class="mt-4">
+                    <h2 class="text-2xl font-bold text-white">Generated SQL Query</h2>
+                    <div class="relative mt-2">
+                        <pre class="bg-gray-800 text-white p-4 rounded overflow-x-auto">{{ generated_query|safe }}</pre>
+                        <button onclick="copyToClipboard()" class="absolute top-0 right-0 p-2 bg-blue-500 hover:bg-blue-600 text-white rounded">
+                            Copy
+                        </button>
+                    </div>
+                    <form action="/apply_query" method="post" class="mt-4">
+                        <input type="hidden" name="query" value="{{ generated_query|safe }}">
+                        <button type="submit" class="btn btn-primary">Apply</button>
+                    </form>
+                </div>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    <script>
+        function copyToClipboard() {
+            var copyText = document.querySelector("#generated-query pre");
+            var textarea = document.createElement("textarea");
+            textarea.value = copyText.innerText;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand("copy");
+            document.body.removeChild(textarea);
+        }
+    </script>
+</body>
+</html>
