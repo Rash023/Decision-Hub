@@ -2,7 +2,8 @@ from flask import Flask, render_template, request, redirect, send_file
 import pandas as pd
 from io import BytesIO
 import plotly.express as px
-
+import seaborn as sns
+import matplotlib.pyplot as plt
 app = Flask(__name__)
 
 @app.route('/')
@@ -45,6 +46,16 @@ def process_data():
         fig.write_image(output_file, format='png')
         output_file.seek(0)
         return send_file(output_file, as_attachment=True, download_name=f'{table_name}_{column_name}_histogram.png')
+    elif option == 'heatmap':
+        # Assuming you have a numeric dataset for the heatmap
+        sns.set()
+        plt.figure(figsize=(10, 8))
+        sns.heatmap(result_df.corr(), annot=True, cmap='coolwarm', fmt=".2f")
+        plt.title(f'Heatmap for {table_name}')
+        output_file = BytesIO()
+        plt.savefig(output_file, format='png')
+        output_file.seek(0)
+        return send_file(output_file, as_attachment=True, download_name=f'{table_name}_heatmap.png')
     elif option in ['mean', 'count', 'average']:
         column_name = request.form['column']
         if option == 'mean':
