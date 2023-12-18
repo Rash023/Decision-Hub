@@ -3,6 +3,7 @@ import os
 import sqlite3
 import google.generativeai as genai
 from dotenv import load_dotenv
+import jsonify
 
 load_dotenv()
 
@@ -52,9 +53,23 @@ def execute(filename):
 def index():
     return render_template('index.html')
 
+def execute(filename):
+    tables_info = {}  # Store the tables and their columns
+    con = sqlite3.connect(filename)
+    cursor = con.cursor()
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+    tables = [table[0] for table in cursor.fetchall()]
+
+    for table in tables:
+        cursor.execute(f'PRAGMA table_info({table})')
+        columns_info = cursor.fetchall()
+        columns = [column[1] for column in columns_info]
+        tables_info[table] = columns
+
+    return tables_info  # Return the tables and their columns
+
 @app.route('/upload', methods=['POST'])
 def upload_file():
-    global DB_INFO
     global FILE_NAME
     if 'file' not in request.files:
         return redirect(url_for('index'))
@@ -69,10 +84,9 @@ def upload_file():
             os.makedirs('uploads')
         filename = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
         file.save(filename)
-        execute(filename)
+        tables_info = execute(filename)
         FILE_NAME = filename
-        print(DB_INFO)
-        return render_template('index.html', message="File uploaded successfully!", filename=file.filename, db_info=DB_INFO)
+        return render_template('index.html', message="File uploaded successfully!", filename=file.filename, tables_info=tables_info)
 
     return redirect(url_for('index'))
 
@@ -99,6 +113,30 @@ def execute_query():
         return render_template('result.html', data=data)
 
 
+@app.route('/col_info/<table>')
+def col_info(table):
+    try:
+        con = sqlite3.connect(FILE_NAME)
+        cursor = con.cursor()
+        cursor.execute(f'PRAGMA table_info({table})')
+        columns_info = cursor.fetchall()
+        columns = [column[1] for column in columns_info]
+        return render_template('col_info.html', columns=columns)
+    except Exception as e:
+        print(f"Error fetching column information for table {table}: {str(e)}")
+
+@app.route('/get_columns/<table>')
+def get_columns(table):
+    try:
+        con = sqlite3.connect(FILE_NAME)
+        cursor = con.cursor()
+        cursor.execute(f'PRAGMA table_info({table})')
+        columns_info = cursor.fetchall()
+        columns = [column[1] for column in columns_info]
+        return jsonify({'columns': columns})
+    except Exception as e:
+        print(f"Error fetching columns for table {table}: {str(e)}")
+        return jsonify({'error': 'Internal Server Error'}), 500
 
 
 def get_query(query):
@@ -112,4 +150,4 @@ def get_query(query):
     return response_text.text
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
