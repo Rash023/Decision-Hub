@@ -96,8 +96,15 @@
   <h2 style="text-align: left;">ARCHITECTURAL DIAGRAM</h2>
   <p align="center"><img src="https://res.cloudinary.com/dvpulu3cc/image/upload/v1702618913/ARCHITECTURE_DIAGRAM_tk8eme.png" alt="Decision Hub Architectural Diagram"></p>
   <h2 style="text-align: left;">PROTOTYPE VIDEO</h2>
-  https://github.com/hRJ06/Decision-Hub/assets/123245585/de77762b-902e-4377-b611-a644cf553eb2
   
+  
+
+
+https://github.com/hRJ06/Decision-Hub/assets/123245585/2b4a4551-43c2-4171-b887-a6e65d588609
+
+
+
+
   <h2 style="text-align: left;">CODE DEPLOYMENT</h2>
 
 <h3 style="text-align: left;">SETTING UP DECISION MAKING & QUERY GENERATION</h3>
