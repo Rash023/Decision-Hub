@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, send_file
 import os
 import sqlite3
 import google.generativeai as genai
@@ -13,16 +13,21 @@ UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 DB_INFO = ''  
 FILE_NAME = ''
+TABLE_NAME = []
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() == 'db'
 
 def execute(filename):
-    global DB_INFO  
+    global DB_INFO, TABLE_NAME
     con = sqlite3.connect(filename)
     cursor = con.cursor()
     cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
     tables = cursor.fetchall()
+
+    TABLE_NAME = [table[0] for table in tables] 
+
+
     for table in tables:
         table_name = table[0]
         cursor.execute(f'PRAGMA table_info({table_name})')
@@ -49,24 +54,11 @@ def execute(filename):
 
         DB_INFO += table_info_string
 
+    return TABLE_NAME, DB_INFO
+
 @app.route('/')
 def index():
     return render_template('index.html')
-
-def execute(filename):
-    tables_info = {}  # Store the tables and their columns
-    con = sqlite3.connect(filename)
-    cursor = con.cursor()
-    cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
-    tables = [table[0] for table in cursor.fetchall()]
-
-    for table in tables:
-        cursor.execute(f'PRAGMA table_info({table})')
-        columns_info = cursor.fetchall()
-        columns = [column[1] for column in columns_info]
-        tables_info[table] = columns
-
-    return tables_info  # Return the tables and their columns
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -84,9 +76,10 @@ def upload_file():
             os.makedirs('uploads')
         filename = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
         file.save(filename)
-        tables_info = execute(filename)
+        TABLE_NAME, DB_INFO = execute(filename)
+        print(TABLE_NAME)
         FILE_NAME = filename
-        return render_template('index.html', message="File uploaded successfully!", filename=file.filename, tables_info=tables_info)
+        return render_template('index.html', message="File uploaded successfully!", table_names = TABLE_NAME)
 
     return redirect(url_for('index'))
 
@@ -97,46 +90,29 @@ def generate_query():
         user_query = request.form['query']
         generated_query = get_query(user_query)
         modified_query = generated_query[6:-3]
-        return render_template('index.html', message="Query generated successfully!", generated_query=modified_query)
+        return render_template('index.html', message="Query generated successfully!", table_names = TABLE_NAME, generated_query=modified_query)
     return redirect(url_for('index'))
 
 @app.route('/apply_query', methods = ['POST'])
 def execute_query():
-    global FILE_NAME
+    global FILE_NAME, TABLE_NAME, DB_INFO
     if 'query' in request.form:
         query = request.form['query']
         con = sqlite3.connect(FILE_NAME)
         cursor = con.cursor()
         cursor.execute(query)
+        con.commit()
         data = cursor.fetchall()
-        print(data)
-        return render_template('result.html', data=data)
+        TABLE_NAME, DB_INFO = execute(FILE_NAME)
+        if data:
+            return render_template('result.html', data=data)
+        else:
+            return render_template('index.html', message="Query peformed successfully!", table_names = TABLE_NAME)
 
-
-@app.route('/col_info/<table>')
-def col_info(table):
-    try:
-        con = sqlite3.connect(FILE_NAME)
-        cursor = con.cursor()
-        cursor.execute(f'PRAGMA table_info({table})')
-        columns_info = cursor.fetchall()
-        columns = [column[1] for column in columns_info]
-        return render_template('col_info.html', columns=columns)
-    except Exception as e:
-        print(f"Error fetching column information for table {table}: {str(e)}")
-
-@app.route('/get_columns/<table>')
-def get_columns(table):
-    try:
-        con = sqlite3.connect(FILE_NAME)
-        cursor = con.cursor()
-        cursor.execute(f'PRAGMA table_info({table})')
-        columns_info = cursor.fetchall()
-        columns = [column[1] for column in columns_info]
-        return jsonify({'columns': columns})
-    except Exception as e:
-        print(f"Error fetching columns for table {table}: {str(e)}")
-        return jsonify({'error': 'Internal Server Error'}), 500
+@app.route('/get_file', methods=['GET'])
+def download_file():
+    global FILE_NAME
+    return send_file(FILE_NAME, as_attachment=True)
 
 
 def get_query(query):
@@ -144,7 +120,7 @@ def get_query(query):
     genai.configure(api_key=api_key)
     model_text = genai.GenerativeModel('gemini-pro')
     initial_text = "Here is my database info."
-    question_text = f"Please generate me a SQL Query for this database for the following user query: {query}. I need just the query"
+    question_text = f"Please generate me a SQLite Query for this database for the following user query: {query}. I need just the query"
     response_text = model_text.generate_content(initial_text + DB_INFO + question_text)
     print(response_text.text)
     return response_text.text

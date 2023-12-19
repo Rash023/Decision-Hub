@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,9 +30,40 @@
             border: 1px solid #dee2e6;
             border-radius: 5px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        span {
+            margin-right: 10px;
+        }
+
+        script {
+            display: block;
+            margin-top: 20px;
+        }
+
+        #columns-container {
+            display: none;
+            margin-top: 10px;
+        }
+
+        #columns-container ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #columns-container li {
+            margin-bottom: 5px;
+            padding: 5px;
+            background-color: #ffffff;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>Query Result</h1>
@@ -39,32 +71,12 @@
             {% for row in data %}
                 <li>
                     {% for item in row %}
-                        <span class="mr-2">{{ item }}</span>
+                        <span>{{ item }}</span>
                     {% endfor %}
                 </li>
             {% endfor %}
         </ul>
-
-        <script>
-            function fetchColumns(table) {
-                var columnsContainer = document.getElementById(table + '-columns');
-                if (columnsContainer.style.display === 'none') {
-                    fetch('/get_columns/' + table)
-                        .then(response => response.json())
-                        .then(data => {
-                            var columnsList = '<ul>';
-                            data.columns.forEach(column => {
-                                columnsList += '<li>' + column + '</li>';
-                            });
-                            columnsList += '</ul>';
-                            columnsContainer.innerHTML = columnsList;
-                        });
-                    columnsContainer.style.display = 'block';
-                } else {
-                    columnsContainer.style.display = 'none';
-                }
-            }
-        </script>
     </div>
 </body>
+
 </html>
